@@ -1,1 +1,0 @@
-udo update-alternatives --config editor
