@@ -1,0 +1,4 @@
+#!/bin/bash
+# set -x
+OPENDIR=$(pwd);
+gnome-terminal --working-directory="$OPENDIR" &
