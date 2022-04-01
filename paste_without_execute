@@ -1,0 +1,14 @@
+#!/bin/bash
+# I got "bind: warning: line editing not enabled" error due to not use source. You could assign a alias for preventing to type source everytime for calling script or You could copy and paste this script to .bashrc as a function.
+
+if command -v xclip 1>/dev/null;
+then
+	if [[ -p /dev/stdin ]]
+	then
+		bind '"\e[0n": "'"$(xclip -i -selection clipboard)"'"'; printf '\e[5n'
+	else
+		bind '"\e[0n": "'"$(xclip -o -selection clipboard)"'"'; printf '\e[5n'
+	fi
+else
+	echo "Remember to install xclip"
+fi
