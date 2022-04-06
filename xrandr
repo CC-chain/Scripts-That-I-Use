@@ -1,0 +1,43 @@
+#!/bin/bash
+
+if command -v xrandr &> /dev/null
+then
+
+
+TEMP=$(getopt -o r::b: --long resolution:,brightness: -- "$@")
+MONITOR_COUNT=$(xrandr --listmonitors | grep -oP '(?<=^Monitors: )(\d+$)')
+if [ "1" -eq "$MONITOR_COUNT" ] 
+			then 
+				echo "Primary monitor is selected!"
+				MONITOR=$(xrandr | grep -oP '^(\S+)(?= connected primary)')
+				
+			else
+				echo "${MONITOR_COUNT} monitor you have, please type your selected monitor"
+				xrandr --listactivemonitors
+				read -p 'Selected Monitor: ' MONITOR
+				echo "$MONITOR monitor is selected!"
+fi
+
+if [ $? != 0 ] ; then echo "Terminating..." >&2 ; exit 1 ; fi
+echo $@
+eval set -- "$TEMP" 
+echo $@
+while true ; do
+    case "$1" in
+        -b|--brightness) xrandr --output $MONITOR --brightness "$2"; shift 2 ;;
+        -r|--resolution) 
+		case "$2" in
+			"")
+				xrandr ;
+				read -p 'Select resolution: ' NEW_RESOLUTION;
+				xrandr --output $MONITOR --mode "${NEW_RESOLUTION}";
+				shift 2;;
+			*)
+				xrandr --output $MONITOR --mode "$2" 
+				shift 2;;
+	      esac ;;
+        --) shift ; break ;;
+        *) echo "Internal error!" ; exit 1 ;;
+    esac
+done
+fi
